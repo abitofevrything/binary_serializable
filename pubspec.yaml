@@ -1,0 +1,9 @@
+name: binary_serializable_workspace
+
+environment:
+  sdk: ^3.5.0-243.0.dev
+
+workspace:
+  - packages/binary_serializable
+  - packages/binary_serializable_generator
+  # - packages/example
