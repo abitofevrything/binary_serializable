@@ -150,31 +150,12 @@ class ${clazz.name}Type extends BinaryType<${clazz.name}> {
       _${clazz.name}Conversion(onValue);
 }
 
-class _${clazz.name}Conversion extends BinaryConversion<${clazz.name}> {
-  late BinaryConversion currentConversion = initialConversion;
-  late final BinaryConversion initialConversion = startConversion();
-
+class _${clazz.name}Conversion extends CompositeBinaryConversion<${clazz.name}> {
   _${clazz.name}Conversion(super.onValue);
-
+  
   @override
-  int add(Uint8List data) {
-    var offset = 0;
-    do {
-      offset += currentConversion.add(Uint8List.sublistView(data, offset));
-    } while (offset < data.length && currentConversion != initialConversion);
-    return offset;
-  }
-
   BinaryConversion startConversion() {
     $startConversionBody
-  }
-
-  @override
-  void flush() {
-    currentConversion.flush();
-    if (currentConversion != initialConversion) {
-      throw 'pending ${clazz.name} conversion';
-    }
   }
 }
 ''';

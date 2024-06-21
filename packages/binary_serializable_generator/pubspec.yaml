@@ -1,6 +1,6 @@
 name: binary_serializable_generator
 description: Code generation for binary_serializable's BinaryTypes.
-version: 0.1.0
+version: 0.2.0
 
 repository: https://github.com/abitofevrything/binary_serializable/tree/main/packages/binary_serializable_generator
 
@@ -11,7 +11,7 @@ resolution: workspace
 
 dependencies:
   source_gen: ^1.5.0
-  binary_serializable: ^0.1.0
+  binary_serializable: ^0.2.0
   analyzer: ^6.5.2
   build: ^2.4.1
   build_config: ^1.1.1
