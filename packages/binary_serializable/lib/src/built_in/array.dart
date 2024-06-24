@@ -35,7 +35,9 @@ class _ArrayConversion<T> extends BinaryConversion<List<T>> {
   late List<T> current;
   int index = 0;
 
-  _ArrayConversion(this.type, super.onValue);
+  _ArrayConversion(this.type, super.onValue) {
+    if (type.length == 0) onValue([]);
+  }
 
   @override
   int add(Uint8List data) {
