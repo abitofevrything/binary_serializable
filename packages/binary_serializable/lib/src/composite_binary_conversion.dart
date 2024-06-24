@@ -16,7 +16,7 @@ abstract class CompositeBinaryConversion<T> extends BinaryConversion<T> {
   int add(Uint8List data) {
     var offset = 0;
     do {
-      _currentConversion.add(Uint8List.sublistView(data, offset));
+      offset += _currentConversion.add(Uint8List.sublistView(data, offset));
     } while (offset < data.length && _currentConversion != _initialConversion);
     return offset;
   }
