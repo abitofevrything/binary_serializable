@@ -1,3 +1,7 @@
+## 0.2.2
+
+- Change default endianess for numeric types to big endian.
+
 ## 0.2.1
 
 - Allow 0-length conversions.
