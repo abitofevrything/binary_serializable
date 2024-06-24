@@ -68,7 +68,7 @@ class IntegerType extends BinaryType<int> {
   final Endian endian;
 
   const IntegerType(this.width, this.getValue, this.setValue,
-      {this.endian = Endian.little});
+      {this.endian = Endian.big});
 
   @override
   Uint8List encode(int input) {

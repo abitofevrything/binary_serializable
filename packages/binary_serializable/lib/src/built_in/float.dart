@@ -29,7 +29,7 @@ class FloatType extends BinaryType<double> {
   final Endian endian;
 
   const FloatType(this.width, this.getValue, this.setValue,
-      {this.endian = Endian.little});
+      {this.endian = Endian.big});
 
   @override
   Uint8List encode(double input) {
