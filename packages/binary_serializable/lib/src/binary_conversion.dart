@@ -24,10 +24,13 @@ abstract class BinaryConversion<T> {
   /// output. Multiple calls to [add] may therefore be needed to consume all of
   /// [data]. Use [addAll] if you want to consume all of [data].
   ///
-  /// Returns the number of bytes of [data] consumed. This will always be
-  /// greater than 0, but may be less than `data.length` if a value was
+  /// Returns the number of bytes of [data] consumed. Usually, this value will
+  /// be greater than 0 and may be less than `data.length` if a value was
   /// converted. `data.length` is returned if no value was converted (more data
-  /// needed) or if [data] contained exactly one value.
+  /// needed) or if [data] contained exactly one value. This method may also
+  /// return 0 if no bytes were needed to produce a value, such as when
+  /// converting a 0-length buffer. In this case, each call to [add] results in
+  /// exactly one call to [onValue].
   int add(Uint8List data);
 
   /// Adds all of [data] to this conversion.
