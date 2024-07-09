@@ -132,8 +132,14 @@ $currentConversion = $initialConversion;
 ''';
     }
 
+    final firstAscii =
+        clazz.name.split('').indexWhere((c) => RegExp('[a-zA-Z]').hasMatch(c));
+    final camelCasedName = clazz.name.substring(0, firstAscii) +
+        clazz.name[firstAscii].toLowerCase() +
+        clazz.name.substring(firstAscii + 1);
+
     return '''
-const ${clazz.name[0].toLowerCase() + clazz.name.substring(1)}Type = ${clazz.name}Type();
+const ${camelCasedName}Type = ${clazz.name}Type();
 
 class ${clazz.name}Type extends BinaryType<${clazz.name}> {
   const ${clazz.name}Type();
