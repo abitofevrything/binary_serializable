@@ -22,9 +22,7 @@ class BufferConversion extends BinaryConversion<Uint8List> {
 
   final BytesBuilder _builder = BytesBuilder();
 
-  BufferConversion(this.length, super.onValue) {
-    if (length == 0) onValue(Uint8List(0));
-  }
+  BufferConversion(this.length, super.onValue);
 
   @override
   int add(Uint8List data) {

@@ -11,7 +11,7 @@ class ArrayType<T> extends BinaryType<List<T>> {
   /// The type used to parse the elements of the array.
   final BinaryType<T> type;
 
-  const ArrayType(this.length, this.type) : assert(length != 0);
+  const ArrayType(this.length, this.type);
 
   @override
   Uint8List encode(List<T> input) {
@@ -35,9 +35,7 @@ class _ArrayConversion<T> extends BinaryConversion<List<T>> {
   late List<T> current;
   int index = 0;
 
-  _ArrayConversion(this.type, super.onValue) {
-    if (type.length == 0) onValue([]);
-  }
+  _ArrayConversion(this.type, super.onValue);
 
   @override
   int add(Uint8List data) {
