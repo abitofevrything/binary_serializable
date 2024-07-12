@@ -6,7 +6,7 @@ import 'package:binary_serializable/src/binary_type.dart';
 class BufferType extends BinaryType<Uint8List> {
   final int length;
 
-  const BufferType(this.length) : assert(length > 0);
+  const BufferType(this.length);
 
   @override
   Uint8List encode(Uint8List input) => input;
@@ -22,7 +22,7 @@ class BufferConversion extends BinaryConversion<Uint8List> {
 
   final BytesBuilder _builder = BytesBuilder();
 
-  BufferConversion(this.length, super.onValue) : assert(length > 0);
+  BufferConversion(this.length, super.onValue);
 
   @override
   int add(Uint8List data) {

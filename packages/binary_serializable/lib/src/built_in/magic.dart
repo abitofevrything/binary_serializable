@@ -17,7 +17,6 @@ abstract class Magic extends BinaryType<Uint8List> {
       _MagicConversion(this, onValue);
 }
 
-// ignore: missing_override_of_must_be_overridden
 class _FunctionProvidedMagic extends Magic {
   final Uint8List Function() provider;
 
