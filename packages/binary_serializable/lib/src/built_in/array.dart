@@ -11,7 +11,7 @@ class ArrayType<T> extends BinaryType<List<T>> {
   /// The type used to parse the elements of the array.
   final BinaryType<T> type;
 
-  const ArrayType(this.length, this.type);
+  const ArrayType(this.length, this.type) : assert(length > 0);
 
   @override
   Uint8List encode(List<T> input) {
@@ -25,45 +25,47 @@ class ArrayType<T> extends BinaryType<List<T>> {
   @override
   BinaryConversion<List<T>> startConversion(
           void Function(List<T> p1) onValue) =>
-      _ArrayConversion(this, onValue);
+      ArrayConversion(length, type, onValue);
 }
 
-class _ArrayConversion<T> extends BinaryConversion<List<T>> {
-  final ArrayType<T> type;
-  late final BinaryConversion<T> conversion = startConversion();
+class ArrayConversion<T> extends BinaryConversion<List<T>> {
+  final int length;
+  final BinaryType<T> type;
 
-  late List<T> current;
-  int index = 0;
+  late final BinaryConversion<T> _conversion = startConversion();
 
-  _ArrayConversion(this.type, super.onValue);
+  late List<T> _current;
+  int _index = 0;
+
+  ArrayConversion(this.length, this.type, super.onValue) : assert(length > 0);
 
   @override
   int add(Uint8List data) {
     var offset = 0;
     do {
-      offset += conversion.add(Uint8List.sublistView(data, offset));
-    } while (index != 0 && offset < data.length);
+      offset += _conversion.add(Uint8List.sublistView(data, offset));
+    } while (_index != 0 && offset < data.length);
     return offset;
   }
 
-  BinaryConversion<T> startConversion() => type.type.startConversion((value) {
-        if (index == 0) {
-          current = List.filled(type.length, value);
+  BinaryConversion<T> startConversion() => type.startConversion((value) {
+        if (_index == 0) {
+          _current = List.filled(length, value);
         } else {
-          current[index] = value;
+          _current[_index] = value;
         }
 
-        index++;
+        _index++;
 
-        if (index == type.length) {
-          onValue(current);
-          index = 0;
+        if (_index == length) {
+          onValue(_current);
+          _index = 0;
         }
       });
 
   @override
   void flush() {
-    conversion.flush();
-    if (index != 0) throw 'pending array conversion';
+    _conversion.flush();
+    if (_index != 0) throw 'pending array conversion';
   }
 }
