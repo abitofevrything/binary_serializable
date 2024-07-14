@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:meta/meta.dart';
+
 /// An ongoing conversion of binary data to a Dart object.
 ///
 /// A [BinaryConversion] consumes binary data received from calls to [add] or
@@ -9,14 +11,13 @@ import 'dart:typed_data';
 /// conversion, it is started over and further calls to [add] and [addAll] start
 /// building another object.
 abstract class BinaryConversion<T> {
-  /// A function invoked when this conversion produces a value.
-  final void Function(T) onValue;
+  final void Function(T) _onValue;
 
   /// Create a [BinaryConversion] with the specified output.
   ///
   /// If this conversion requires no data to produce a value, such as converting
   /// a 0-length buffer, [onValue] is invoked immediately.
-  BinaryConversion(this.onValue);
+  BinaryConversion(this._onValue);
 
   /// Add [data] to this conversion.
   ///
@@ -49,4 +50,7 @@ abstract class BinaryConversion<T> {
   }
 
   void flush();
+
+  @protected
+  void onValue(T value) => _onValue(value);
 }

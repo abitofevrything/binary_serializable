@@ -113,13 +113,9 @@ class BinarySerializableGenerator
     final currentConversion = fieldNames.contains('currentConversion')
         ? 'this.currentConversion'
         : 'currentConversion';
-    final initialConversion = fieldNames.contains('initialConversion')
-        ? 'this.initialConversion'
-        : 'initialConversion';
 
     var startConversionBody = '''
 onValue($constructorName(${arguments.join(', ')}));
-$currentConversion = $initialConversion;
 ''';
 
     for (int i = fieldNames.length - 1; i >= 0; i--) {

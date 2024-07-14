@@ -32,7 +32,6 @@ class _ExampleConversion extends CompositeBinaryConversion<Example> {
     return uint8.startConversion((type) {
       currentConversion = const BufferType(256).startConversion((data) {
         onValue(Example(type, data));
-        currentConversion = initialConversion;
       });
     });
   }
