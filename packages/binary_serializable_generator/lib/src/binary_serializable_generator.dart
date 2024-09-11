@@ -23,7 +23,7 @@ class BinarySerializableGenerator
         TypeChecker.fromStatic(binaryTypeElement.thisType);
 
     final (clazz, constructor) = switch (element) {
-      ConstructorElement() => (element.enclosingElement, element),
+      ConstructorElement() => (element.enclosingElement3, element),
       ClassElement() => (
           element,
           element.constructors.singleWhere(
