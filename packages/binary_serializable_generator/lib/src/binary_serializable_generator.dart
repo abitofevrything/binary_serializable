@@ -120,13 +120,16 @@ class BinarySerializableGenerator
         bool foundDefiniteAnnotation = false;
         for (final annotation in child.metadata) {
           final value = annotation.computeConstantValue();
+
+          if (value == null) {
+            // For potentially ungenerated types.
+            binaryTypeAnnotation ??= annotation;
+          }
+
           final type = value?.type;
           if (value == null || type == null) continue;
 
-          if (annotation.constantEvaluationErrors?.isNotEmpty == true) {
-            // For potentially ungenerated types.
-            binaryTypeAnnotation ??= annotation;
-          } else if (binaryTypeChecker.isAssignableFromType(type)) {
+          if (binaryTypeChecker.isAssignableFromType(type)) {
             if (binaryTypeAnnotation != null && foundDefiniteAnnotation) {
               throw Exception('Duplicate type definition (${child.name})');
             }
