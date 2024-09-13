@@ -51,24 +51,28 @@ class MultiBinaryConversion<T, U> extends BinaryConversion<T> {
 
   @override
   int add(Uint8List data) {
+    var consumed = 0;
+
     if (identical(_currentConversion, _preludeConversion)) {
-      final preludeConsumed = _preludeConversion.add(data);
-      _preludeBytes.add(Uint8List.sublistView(data, 0, preludeConsumed));
+      consumed += _preludeConversion.add(data);
+      _preludeBytes.add(Uint8List.sublistView(data, 0, consumed));
 
       if (identical(_currentConversion, _preludeConversion)) {
-        return preludeConsumed;
+        return consumed;
       } else {
-        data = Uint8List.sublistView(data, preludeConsumed);
+        data = Uint8List.sublistView(data, consumed);
 
         final expectedConsumption = _preludeBytes.length;
-        final consumed = _currentConversion.add(_preludeBytes.takeBytes());
-        if (consumed != expectedConsumption) {
+        final actualConsumption =
+            _currentConversion.add(_preludeBytes.takeBytes());
+        if (actualConsumption != expectedConsumption) {
           throw 'conversion did not read entire prelude';
         }
       }
     }
 
-    return _currentConversion.add(data);
+    consumed += _currentConversion.add(data);
+    return consumed;
   }
 
   @override
