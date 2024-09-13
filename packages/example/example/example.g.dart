@@ -44,7 +44,8 @@ class _ExampleConversion extends CompositeBinaryConversion<Example> {
 const baseType = BaseType();
 
 class BaseType extends MultiBinaryType<Base, (int, int)> {
-  const BaseType() : super(const {(2, 2): bType, (1, 0): aType});
+  const BaseType([Map<(int, int), BinaryType<Base>>? overrides])
+      : super(overrides ?? const {(2, 2): bType, (1, 0): aType});
 
   @override
   (int, int) extractPrelude(Base instance) => (instance.id, instance.subId);
@@ -122,7 +123,8 @@ class _AConversion extends CompositeBinaryConversion<A> {
 const bType = BType();
 
 class BType extends MultiBinaryType<B, (int, int, int)> {
-  const BType() : super(const {(2, 2, 3): cType, (2, 2, 4): dType});
+  const BType([Map<(int, int, int), BinaryType<B>>? overrides])
+      : super(overrides ?? const {(2, 2, 3): cType, (2, 2, 4): dType});
 
   @override
   (int, int, int) extractPrelude(B instance) =>

@@ -307,21 +307,24 @@ ${generateConversion(
       final preludeTypes =
           fields.where((f) => f.isInPrelude).map((f) => f.type);
 
-      final preludeType =
-          '(${preludeTypes.join(', ')}${preludeTypes.length == 1 ? ',' : ''})';
+      if (preludeTypes.isEmpty) {
+        throw Exception('No prelude in abstract class');
+      }
+
+      final preludeType = preludeTypes.length == 1
+          ? preludeTypes.single
+          : '(${preludeTypes.join(', ')})';
 
       final preludeFields =
           fields.where((f) => f.isInPrelude).map((f) => f.name);
 
-      final instancePreludeLiteral =
-          '(${preludeFields.map((f) => 'instance.$f').join(',')}${preludeFields.length == 1 ? ',' : ''})';
+      final instancePreludeLiteral = preludeFields.length == 1
+          ? 'instance.${preludeFields.single}'
+          : '(${preludeFields.map((f) => 'instance.$f').join(',')})';
 
-      final preludeLiteral =
-          '(${preludeFields.join(',')}${preludeFields.length == 1 ? ',' : ''})';
-
-      if (preludeTypes.isEmpty) {
-        throw Exception('No prelude in abstract class');
-      }
+      final preludeLiteral = preludeFields.length == 1
+          ? preludeFields.single
+          : '(${preludeFields.join(',')})';
 
       final subtypes = findDirectSerializableSubtypes(clazz);
       if (subtypes.isEmpty) {
@@ -367,8 +370,9 @@ ${generateConversion(
           fieldValues.add(body.expression.toSource());
         }
 
-        final preludeValue =
-            '(${fieldValues.join(', ')}${fieldValues.length == 1 ? ',' : ''})';
+        final preludeValue = fieldValues.length == 1
+            ? fieldValues.single
+            : '(${fieldValues.join(', ')})';
 
         final firstAscii = subtype.name
             .split('')
@@ -384,7 +388,7 @@ ${generateConversion(
 const ${camelCasedName}Type = ${clazz.name}Type();
 
 class ${clazz.name}Type extends MultiBinaryType<${clazz.name}, $preludeType> {
-  const ${clazz.name}Type() : super(const {${subtypeEntries.join(',')}});
+  const ${clazz.name}Type([Map<$preludeType, BinaryType<${clazz.name}>>? overrides]) : super(overrides ?? const {${subtypeEntries.join(',')}});
 
   @override
   $preludeType extractPrelude(${clazz.name} instance) => $instancePreludeLiteral;
