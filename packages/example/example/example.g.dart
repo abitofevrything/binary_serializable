@@ -33,7 +33,9 @@ class _ExampleConversion extends CompositeBinaryConversion<Example> {
   BinaryConversion startConversion() {
     return uint8.startConversion((type) {
       currentConversion = const BufferType(256).startConversion((data) {
-        onValue(Example(type, data));
+        final instance = Example(type, data);
+
+        onValue(instance);
       });
     });
   }
@@ -106,10 +108,20 @@ class _AConversion extends CompositeBinaryConversion<A> {
         currentConversion = int32.startConversion((concreteAgain) {
           currentConversion = int32.startConversion((subId) {
             currentConversion = int32.startConversion((aSpecific) {
-              onValue(A(
+              final instance = A(
                   concrete: concrete,
                   concreteAgain: concreteAgain,
-                  aSpecific: aSpecific));
+                  aSpecific: aSpecific);
+
+              if (instance.id != id) {
+                throw 'parsed field id does not match predefined value';
+              }
+
+              if (instance.subId != subId) {
+                throw 'parsed field subId does not match predefined value';
+              }
+
+              onValue(instance);
             });
           });
         });
@@ -192,10 +204,24 @@ class _CConversion extends CompositeBinaryConversion<C> {
           currentConversion = int32.startConversion((subId) {
             currentConversion = int32.startConversion((bSpecific) {
               currentConversion = int32.startConversion((bId) {
-                onValue(C(
+                final instance = C(
                     concrete: concrete,
                     concreteAgain: concreteAgain,
-                    bSpecific: bSpecific));
+                    bSpecific: bSpecific);
+
+                if (instance.id != id) {
+                  throw 'parsed field id does not match predefined value';
+                }
+
+                if (instance.subId != subId) {
+                  throw 'parsed field subId does not match predefined value';
+                }
+
+                if (instance.bId != bId) {
+                  throw 'parsed field bId does not match predefined value';
+                }
+
+                onValue(instance);
               });
             });
           });
@@ -242,11 +268,25 @@ class _DConversion extends CompositeBinaryConversion<D> {
             currentConversion = int32.startConversion((bSpecific) {
               currentConversion = int32.startConversion((bId) {
                 currentConversion = int32.startConversion((ddddd) {
-                  onValue(D(
+                  final instance = D(
                       concrete: concrete,
                       concreteAgain: concreteAgain,
                       bSpecific: bSpecific,
-                      ddddd: ddddd));
+                      ddddd: ddddd);
+
+                  if (instance.id != id) {
+                    throw 'parsed field id does not match predefined value';
+                  }
+
+                  if (instance.subId != subId) {
+                    throw 'parsed field subId does not match predefined value';
+                  }
+
+                  if (instance.bId != bId) {
+                    throw 'parsed field bId does not match predefined value';
+                  }
+
+                  onValue(instance);
                 });
               });
             });

@@ -251,6 +251,32 @@ class _${className}Conversion extends CompositeBinaryConversion<$targetType> {
         return field.name;
       });
 
+      var generatedInstanceName = 'instance';
+      while (fields.any((f) => f.name == generatedInstanceName)) {
+        generatedInstanceName = '_$generatedInstanceName';
+      }
+
+      final onValueMethod =
+          fields.any((f) => f.name == 'onValue') ? 'this.onValue' : 'onValue';
+
+      final argumentValidations = [
+        for (final field in fields)
+          if (field.isInPrelude)
+            '''
+    if ($generatedInstanceName.${field.name} != ${field.name}) {
+      throw 'parsed field ${field.name} does not match predefined value';
+    }
+''',
+      ];
+
+      final startConversionBody = '''
+    final $generatedInstanceName = $constructorName(${arguments.join(', ')});
+
+    ${argumentValidations.join('\n')}
+
+    $onValueMethod($generatedInstanceName);
+''';
+
       return '''
 const ${camelCasedName}Type = ${clazz.name}Type();
 
@@ -272,7 +298,7 @@ class ${clazz.name}Type extends BinaryType<${clazz.name}> {
 ${generateConversion(
         clazz.name,
         clazz.name,
-        'onValue($constructorName(${arguments.join(', ')}));',
+        startConversionBody,
         fields,
       )}
 ''';
