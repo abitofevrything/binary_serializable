@@ -22,10 +22,10 @@ abstract class MultiBinaryType<T, U> extends BinaryType<T> {
 
   @override
   BinaryConversion<T> startConversion(void Function(T p1) onValue) =>
-      MultiBinaryConversion(this, onValue);
+      _MultiBinaryConversion(this, onValue);
 }
 
-class MultiBinaryConversion<T, U> extends BinaryConversion<T> {
+class _MultiBinaryConversion<T, U> extends BinaryConversion<T> {
   MultiBinaryType<T, U> type;
 
   late final BinaryConversion<U> _preludeConversion =
@@ -41,7 +41,7 @@ class MultiBinaryConversion<T, U> extends BinaryConversion<T> {
 
   final BytesBuilder _preludeBytes = BytesBuilder(copy: false);
 
-  MultiBinaryConversion(this.type, super.onValue);
+  _MultiBinaryConversion(this.type, super.onValue);
 
   @override
   void onValue(T value) {
