@@ -2,6 +2,7 @@ export 'src/binary_conversion.dart';
 export 'src/binary_serializable.dart';
 export 'src/binary_type.dart';
 export 'src/composite_binary_conversion.dart';
+export 'src/multi_binary_type.dart';
 
 export 'src/built_in/array.dart';
 export 'src/built_in/bool.dart';
