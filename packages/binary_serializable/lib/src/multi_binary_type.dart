@@ -58,6 +58,9 @@ class _MultiBinaryConversion<T, U> extends BinaryConversion<T> {
       _preludeBytes.add(Uint8List.sublistView(data, 0, consumed));
 
       if (identical(_currentConversion, _preludeConversion)) {
+        if (consumed != data.length) {
+          throw 'prelude conversion did not read entire input or emit a value';
+        }
         return consumed;
       } else {
         data = Uint8List.sublistView(data, consumed);
