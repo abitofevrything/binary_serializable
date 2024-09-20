@@ -7,7 +7,7 @@ class LengthPrefixedListType<T> extends BinaryType<List<T>> {
   final BinaryType<int> lengthType;
   final BinaryType<T> type;
 
-  LengthPrefixedListType(this.lengthType, this.type);
+  const LengthPrefixedListType(this.lengthType, this.type);
 
   @override
   Uint8List encode(List<T> input) {
