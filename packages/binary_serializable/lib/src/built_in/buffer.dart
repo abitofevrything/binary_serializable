@@ -20,7 +20,7 @@ class BufferType extends BinaryType<Uint8List> {
 class BufferConversion extends BinaryConversion<Uint8List> {
   final int length;
 
-  final BytesBuilder _builder = BytesBuilder();
+  final BytesBuilder _builder = BytesBuilder(copy: false);
 
   BufferConversion(this.length, super.onValue);
 
