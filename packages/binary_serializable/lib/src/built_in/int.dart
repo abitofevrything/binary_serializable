@@ -3,12 +3,7 @@ import 'dart:typed_data';
 import 'package:binary_serializable/src/binary_conversion.dart';
 import 'package:binary_serializable/src/binary_type.dart';
 
-const uint8 = IntegerType(Uint8List.bytesPerElement, _getUint8, _setUint8);
-
-int _getUint8(int offset, ByteData data, Endian endian) =>
-    data.getUint8(offset);
-void _setUint8(int value, int offset, ByteData data, Endian endian) =>
-    data.setUint8(offset, value);
+const uint8 = _Uint8Type();
 
 const int8 = IntegerType(Int8List.bytesPerElement, _getInt8, _setInt8);
 
@@ -108,4 +103,29 @@ class _IntegerConversion extends BinaryConversion<int> {
   void flush() {
     if (index != 0) throw 'pending integer conversion';
   }
+}
+
+class _Uint8Type extends BinaryType<int> {
+  const _Uint8Type();
+
+  @override
+  Uint8List encode(input) => Uint8List(1)..[0] = input;
+
+  @override
+  BinaryConversion<int> startConversion(void Function(int p1) onValue) =>
+      _Uint8Conversion(onValue);
+}
+
+class _Uint8Conversion extends BinaryConversion<int> {
+  _Uint8Conversion(super.onValue);
+
+  @override
+  int add(Uint8List data) {
+    if (data.isEmpty) return 0;
+    onValue(data[0]);
+    return 1;
+  }
+
+  @override
+  void flush() {}
 }
