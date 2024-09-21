@@ -8,8 +8,6 @@ part of 'example.dart';
 
 // ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
 
-const exampleType = ExampleType();
-
 class ExampleType extends BinaryType<Example> {
   const ExampleType();
 
@@ -23,18 +21,28 @@ class ExampleType extends BinaryType<Example> {
 
   @override
   BinaryConversion<Example> startConversion(void Function(Example) onValue) =>
-      _ExampleConversion(onValue);
+      _ExampleConversion(
+        this,
+        onValue,
+      );
 }
 
 class _ExampleConversion extends CompositeBinaryConversion<Example> {
-  _ExampleConversion(super.onValue);
+  _ExampleConversion(
+    this.type,
+    super.onValue,
+  );
+
+  final ExampleType type;
 
   @override
   BinaryConversion startConversion() {
     return uint8.startConversion((type) {
       currentConversion = const BufferType(256).startConversion((data) {
-        final instance = Example(type, data);
-
+        final instance = Example(
+          type,
+          data,
+        );
         onValue(instance);
       });
     });
@@ -43,23 +51,42 @@ class _ExampleConversion extends CompositeBinaryConversion<Example> {
 
 // ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
 
-const baseType = BaseType();
-
 class BaseType extends MultiBinaryType<Base, (int, int)> {
-  const BaseType([Map<(int, int), BinaryType<Base>>? overrides])
-      : super(overrides ?? const {(2, 2): bType, (1, 0): aType});
+  const BaseType([super.subtypes = BaseType.defaultSubtypes]);
+
+  static const Map<(int, int), BinaryType<Base>> defaultSubtypes = {
+    (
+      1,
+      0,
+    ): AType(),
+    (
+      2,
+      2,
+    ): BType(),
+  };
 
   @override
-  (int, int) extractPrelude(Base instance) => (instance.id, instance.subId);
+  (int, int) extractPrelude(Base instance) => (
+        instance.id,
+        instance.subId,
+      );
 
   @override
   BinaryConversion<(int, int)> startPreludeConversion(
           void Function((int, int)) onValue) =>
-      _BasePreludeConversion(onValue);
+      _BasePreludeConversion(
+        this,
+        onValue,
+      );
 }
 
 class _BasePreludeConversion extends CompositeBinaryConversion<(int, int)> {
-  _BasePreludeConversion(super.onValue);
+  _BasePreludeConversion(
+    this.type,
+    super.onValue,
+  );
+
+  final BaseType type;
 
   @override
   BinaryConversion startConversion() {
@@ -67,7 +94,10 @@ class _BasePreludeConversion extends CompositeBinaryConversion<(int, int)> {
       currentConversion = int32.startConversion((id) {
         currentConversion = int32.startConversion((concreteAgain) {
           currentConversion = int32.startConversion((subId) {
-            onValue((id, subId));
+            onValue((
+              id,
+              subId,
+            ));
           });
         });
       });
@@ -76,8 +106,6 @@ class _BasePreludeConversion extends CompositeBinaryConversion<(int, int)> {
 }
 
 // ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
-
-const aType = AType();
 
 class AType extends BinaryType<A> {
   const AType();
@@ -94,12 +122,19 @@ class AType extends BinaryType<A> {
   }
 
   @override
-  BinaryConversion<A> startConversion(void Function(A) onValue) =>
-      _AConversion(onValue);
+  BinaryConversion<A> startConversion(void Function(A) onValue) => _AConversion(
+        this,
+        onValue,
+      );
 }
 
 class _AConversion extends CompositeBinaryConversion<A> {
-  _AConversion(super.onValue);
+  _AConversion(
+    this.type,
+    super.onValue,
+  );
+
+  final AType type;
 
   @override
   BinaryConversion startConversion() {
@@ -109,10 +144,10 @@ class _AConversion extends CompositeBinaryConversion<A> {
           currentConversion = int32.startConversion((subId) {
             currentConversion = int32.startConversion((aSpecific) {
               final instance = A(
-                  concrete: concrete,
-                  concreteAgain: concreteAgain,
-                  aSpecific: aSpecific);
-
+                concrete: concrete,
+                concreteAgain: concreteAgain,
+                aSpecific: aSpecific,
+              );
               if (instance.id != id) {
                 throw 'parsed field id does not match predefined value';
               }
@@ -132,24 +167,45 @@ class _AConversion extends CompositeBinaryConversion<A> {
 
 // ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
 
-const bType = BType();
-
 class BType extends MultiBinaryType<B, (int, int, int)> {
-  const BType([Map<(int, int, int), BinaryType<B>>? overrides])
-      : super(overrides ?? const {(2, 2, 3): cType, (2, 2, 4): dType});
+  const BType([super.subtypes = BType.defaultSubtypes]);
+
+  static const Map<(int, int, int), BinaryType<B>> defaultSubtypes = {
+    (
+      2,
+      2,
+      3,
+    ): CType(),
+    (
+      2,
+      2,
+      4,
+    ): DType(),
+  };
 
   @override
-  (int, int, int) extractPrelude(B instance) =>
-      (instance.id, instance.subId, instance.bId);
+  (int, int, int) extractPrelude(B instance) => (
+        instance.id,
+        instance.subId,
+        instance.bId,
+      );
 
   @override
   BinaryConversion<(int, int, int)> startPreludeConversion(
           void Function((int, int, int)) onValue) =>
-      _BPreludeConversion(onValue);
+      _BPreludeConversion(
+        this,
+        onValue,
+      );
 }
 
 class _BPreludeConversion extends CompositeBinaryConversion<(int, int, int)> {
-  _BPreludeConversion(super.onValue);
+  _BPreludeConversion(
+    this.type,
+    super.onValue,
+  );
+
+  final BType type;
 
   @override
   BinaryConversion startConversion() {
@@ -159,7 +215,11 @@ class _BPreludeConversion extends CompositeBinaryConversion<(int, int, int)> {
           currentConversion = int32.startConversion((subId) {
             currentConversion = int32.startConversion((bSpecific) {
               currentConversion = int32.startConversion((bId) {
-                onValue((id, subId, bId));
+                onValue((
+                  id,
+                  subId,
+                  bId,
+                ));
               });
             });
           });
@@ -170,8 +230,6 @@ class _BPreludeConversion extends CompositeBinaryConversion<(int, int, int)> {
 }
 
 // ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
-
-const cType = CType();
 
 class CType extends BinaryType<C> {
   const CType();
@@ -189,12 +247,19 @@ class CType extends BinaryType<C> {
   }
 
   @override
-  BinaryConversion<C> startConversion(void Function(C) onValue) =>
-      _CConversion(onValue);
+  BinaryConversion<C> startConversion(void Function(C) onValue) => _CConversion(
+        this,
+        onValue,
+      );
 }
 
 class _CConversion extends CompositeBinaryConversion<C> {
-  _CConversion(super.onValue);
+  _CConversion(
+    this.type,
+    super.onValue,
+  );
+
+  final CType type;
 
   @override
   BinaryConversion startConversion() {
@@ -205,10 +270,10 @@ class _CConversion extends CompositeBinaryConversion<C> {
             currentConversion = int32.startConversion((bSpecific) {
               currentConversion = int32.startConversion((bId) {
                 final instance = C(
-                    concrete: concrete,
-                    concreteAgain: concreteAgain,
-                    bSpecific: bSpecific);
-
+                  concrete: concrete,
+                  concreteAgain: concreteAgain,
+                  bSpecific: bSpecific,
+                );
                 if (instance.id != id) {
                   throw 'parsed field id does not match predefined value';
                 }
@@ -233,8 +298,6 @@ class _CConversion extends CompositeBinaryConversion<C> {
 
 // ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
 
-const dType = DType();
-
 class DType extends BinaryType<D> {
   const DType();
 
@@ -252,12 +315,19 @@ class DType extends BinaryType<D> {
   }
 
   @override
-  BinaryConversion<D> startConversion(void Function(D) onValue) =>
-      _DConversion(onValue);
+  BinaryConversion<D> startConversion(void Function(D) onValue) => _DConversion(
+        this,
+        onValue,
+      );
 }
 
 class _DConversion extends CompositeBinaryConversion<D> {
-  _DConversion(super.onValue);
+  _DConversion(
+    this.type,
+    super.onValue,
+  );
+
+  final DType type;
 
   @override
   BinaryConversion startConversion() {
@@ -269,11 +339,11 @@ class _DConversion extends CompositeBinaryConversion<D> {
               currentConversion = int32.startConversion((bId) {
                 currentConversion = int32.startConversion((ddddd) {
                   final instance = D(
-                      concrete: concrete,
-                      concreteAgain: concreteAgain,
-                      bSpecific: bSpecific,
-                      ddddd: ddddd);
-
+                    concrete: concrete,
+                    concreteAgain: concreteAgain,
+                    bSpecific: bSpecific,
+                    ddddd: ddddd,
+                  );
                   if (instance.id != id) {
                     throw 'parsed field id does not match predefined value';
                   }

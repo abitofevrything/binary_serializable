@@ -15,6 +15,7 @@ dependencies:
   analyzer: ^6.5.2
   build: ^2.4.1
   build_config: ^1.1.1
+  code_builder: ^4.10.0
 
 dev_dependencies:
   lints: ^4.0.0
