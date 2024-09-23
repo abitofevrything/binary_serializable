@@ -11,7 +11,7 @@ resolution: workspace
 
 dependencies:
   source_gen: ^1.5.0
-  binary_serializable: ^0.2.0
+  binary_serializable: ^0.3.0
   analyzer: ^6.5.2
   build: ^2.4.1
   build_config: ^1.1.1
