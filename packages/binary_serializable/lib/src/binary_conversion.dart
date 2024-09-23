@@ -10,13 +10,16 @@ import 'package:meta/meta.dart';
 /// A [BinaryConversion] is never complete. Once a value is produced by the
 /// conversion, it is started over and further calls to [add] and [addAll] start
 /// building another object.
+///
+/// The conversion may be discarded at any time, though [flush] should be called
+/// to ensure no object is currently being built.
 abstract class BinaryConversion<T> {
   final void Function(T) _onValue;
 
-  /// Create a [BinaryConversion] with the specified output.
+  /// Create a [BinaryConversion] with the specified callback.
   ///
-  /// If this conversion requires no data to produce a value, such as converting
-  /// a 0-length buffer, [onValue] is invoked immediately.
+  /// The callback will be invoked whenever this conversion produces a value as
+  /// a result of a call to [add] or [addAll].
   BinaryConversion(this._onValue);
 
   /// Add [data] to this conversion.
@@ -28,10 +31,10 @@ abstract class BinaryConversion<T> {
   /// output. Multiple calls to [add] may therefore be needed to consume all of
   /// [data]. Use [addAll] if you want to consume all of [data].
   ///
-  /// Returns the number of bytes of [data] consumed. This will always be
-  /// greater than 0, but may be less than `data.length` if a value was
-  /// converted. `data.length` is returned if no value was converted (more data
-  /// needed) or if [data] contained exactly one value.
+  /// Returns the number of bytes of [data] consumed. This may be less than
+  /// `data.length` if a value was converted. `data.length` is returned if no
+  /// value was converted (more data needed) or if [data] contained exactly one
+  /// value.
   int add(Uint8List data);
 
   /// Adds all of [data] to this conversion.
@@ -49,8 +52,16 @@ abstract class BinaryConversion<T> {
     }
   }
 
+  /// Ensure this conversion is not currently deserializing a Dart object.
+  ///
+  /// This method will throw an error if called after an [add] or [addAll] call
+  /// that did not produce a value. In other words, it asserts the conversion's
+  /// internal state is "clean" and that no data will be lost by discarding the
+  /// conversion instance.
   void flush();
 
+  /// Called when the conversion produces a value in response to an [add] or
+  /// [addAll] call.
   @protected
   void onValue(T value) => _onValue(value);
 }

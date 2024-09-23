@@ -3,10 +3,16 @@ import 'dart:typed_data';
 import 'package:binary_serializable/src/binary_conversion.dart';
 import 'package:binary_serializable/src/binary_type.dart';
 
+/// A [BinaryType] for variable length lists prefixed with an integer value
+/// indicating their length.
 class LengthPrefixedListType<T> extends BinaryType<List<T>> {
+  /// The [BinaryType] used to read the length prefix.
   final BinaryType<int> lengthType;
+
+  /// The [BinaryType] used to read the elements of the list.
   final BinaryType<T> type;
 
+  /// Create a new [LengthPrefixedListType].
   const LengthPrefixedListType(this.lengthType, this.type);
 
   @override

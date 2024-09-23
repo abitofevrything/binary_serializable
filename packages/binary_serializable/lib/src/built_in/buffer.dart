@@ -3,9 +3,14 @@ import 'dart:typed_data';
 import 'package:binary_serializable/src/binary_conversion.dart';
 import 'package:binary_serializable/src/binary_type.dart';
 
+/// A [BinaryType] for reading buffers of a given length.
+///
+/// This type does not validate the length of buffers it encodes.
 class BufferType extends BinaryType<Uint8List> {
+  /// The length of the buffer to read.
   final int length;
 
+  /// Create a new [BufferType] for a specified [length].
   const BufferType(this.length);
 
   @override
@@ -17,11 +22,15 @@ class BufferType extends BinaryType<Uint8List> {
       BufferConversion(length, onValue);
 }
 
+/// A [BinaryConversion] that produces a buffer containing a set amount of
+/// bytes.
 class BufferConversion extends BinaryConversion<Uint8List> {
+  /// The number of bytes to read into the buffer.
   final int length;
 
   final BytesBuilder _builder = BytesBuilder(copy: false);
 
+  /// Create a new [BufferConversion].
   BufferConversion(this.length, super.onValue);
 
   @override

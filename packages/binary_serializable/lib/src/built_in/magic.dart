@@ -1,11 +1,25 @@
 import 'package:binary_serializable/binary_serializable.dart';
+import 'package:meta/meta.dart';
 
+/// {@template magic}
+/// A [BinaryType] that verifies that a
+/// [magic header](https://en.wikipedia.org/wiki/List_of_file_signatures)
+/// matches the expected value.
+///
+/// This type simply echoes the value read, but throws an error during the
+/// conversion if the bytes do not match the expected header.
+/// {@endtemplate}
 abstract class Magic extends BinaryType<Uint8List> {
+  /// {@macro magic}
   const Magic();
 
+  /// Create a new [Magic] that obtains the header bytes using the specified
+  /// function.
   const factory Magic.fromFunction(Uint8List Function() provider) =
       _FunctionProvidedMagic;
 
+  /// Called to obtain the expected magic bytes.
+  @protected
   Uint8List getMagic();
 
   @override

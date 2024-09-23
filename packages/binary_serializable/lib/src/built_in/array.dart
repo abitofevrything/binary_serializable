@@ -5,12 +5,13 @@ import 'package:binary_serializable/src/binary_type.dart';
 
 /// A [BinaryType] for lists containing a fixed number of elements.
 class ArrayType<T> extends BinaryType<List<T>> {
-  /// The length of the list to parse.
+  /// The number of elements in the lists to parse.
   final int length;
 
-  /// The type used to parse the elements of the array.
+  /// The type used to read the elements of the list.
   final BinaryType<T> type;
 
+  /// Create a new [ArrayType].
   const ArrayType(this.length, this.type);
 
   @override

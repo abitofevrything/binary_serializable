@@ -3,7 +3,14 @@ import 'dart:typed_data';
 import 'package:binary_serializable/src/binary_conversion.dart';
 import 'package:binary_serializable/src/binary_type.dart';
 
+/// {@template bool_type}
+/// A [BinaryType] for [bool]s.
+///
+/// `false` is encoded as a uint8 with a value of 0. `true` is encoded as any
+/// other `uint8` value (though 1 is commonly used).
+/// {@endtemplate}
 class BoolType extends BinaryType<bool> {
+  /// {@macro bool_type}
   const BoolType();
 
   @override
