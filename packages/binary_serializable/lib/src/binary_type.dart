@@ -58,8 +58,8 @@ class _BinaryDecoder<T> extends Converter<List<int>, T> {
 
     final conversion = type.startConversion((value) {
       result = value;
-      didConvert = true;
       assert(!didConvert, 'Already converted value');
+      didConvert = true;
     });
 
     final consumed = conversion.add(input);
