@@ -93,6 +93,6 @@ class _FloatConversion extends BinaryConversion<double> {
 
   @override
   void flush() {
-    if (index != 0) throw 'pending float conversion';
+    if (index != 0) throw StateError('Pending float conversion');
   }
 }

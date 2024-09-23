@@ -88,6 +88,6 @@ class _ListConversion<T> extends BinaryConversion<List<T>> {
   void flush() {
     lengthConversion.flush();
     conversion.flush();
-    if (length != null) throw 'pending list conversion';
+    if (length != null) throw StateError('Pending list conversion');
   }
 }

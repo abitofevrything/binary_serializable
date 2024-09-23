@@ -80,7 +80,7 @@ abstract class CompositeBinaryConversion<T> extends BinaryConversion<T> {
   void flush() {
     _currentConversion.flush();
     if (!_isFlushed) {
-      throw 'flushed while reading composite value';
+      throw StateError('Flushed while reading composite value');
     }
   }
 

@@ -53,7 +53,7 @@ abstract class MultiBinaryType<T, U> extends BinaryType<T> {
     final subtype = subtypes[prelude];
 
     if (subtype == null) {
-      throw 'No subtype matching $prelude found';
+      throw FormatException('No subtype matching $prelude found');
     }
 
     return subtype.encode(input);
@@ -71,7 +71,7 @@ class _MultiBinaryConversion<T, U> extends BinaryConversion<T> {
       type.startPreludeConversion((prelude) {
     final subtype = type.subtypes[prelude];
     if (subtype == null) {
-      throw 'no subtype matching $prelude found';
+      throw FormatException('No subtype matching $prelude found');
     }
     _currentConversion = subtype.startConversion(onValue);
   });
@@ -97,9 +97,11 @@ class _MultiBinaryConversion<T, U> extends BinaryConversion<T> {
       _preludeBytes.add(Uint8List.sublistView(data, 0, consumed));
 
       if (identical(_currentConversion, _preludeConversion)) {
-        if (consumed != data.length) {
-          throw 'prelude conversion did not read entire input or emit a value';
-        }
+        assert(
+          consumed == data.length,
+          'Prelude conversion did not read entire input or emit a value',
+        );
+
         return consumed;
       } else {
         // Since subtypes are also fully standalone [BinaryType]s, they expect
@@ -115,9 +117,10 @@ class _MultiBinaryConversion<T, U> extends BinaryConversion<T> {
 
         // The subtype should be made up of at least the fields in the prelude,
         // so we expect it to read all the data we pass it.
-        if (actualConsumption != expectedConsumption) {
-          throw 'Conversion did not read entire prelude';
-        }
+        assert(
+          actualConsumption == expectedConsumption,
+          'Conversion did not read entire prelude',
+        );
 
         // Update the chunk so we don't add data we've already copied into the
         // subtype conversion again.

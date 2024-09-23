@@ -155,7 +155,7 @@ class _IntegerConversion extends BinaryConversion<int> {
 
   @override
   void flush() {
-    if (index != 0) throw 'pending integer conversion';
+    if (index != 0) throw StateError('Pending integer conversion');
   }
 }
 

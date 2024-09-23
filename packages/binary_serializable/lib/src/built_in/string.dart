@@ -60,6 +60,8 @@ class _NullTerminatedStringConversion extends BinaryConversion<String> {
 
   @override
   void flush() {
-    if (builder.isNotEmpty) throw 'pending null terminated string conversion';
+    if (builder.isNotEmpty) {
+      throw StateError('Pending null terminated string conversion');
+    }
   }
 }

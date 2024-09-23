@@ -48,6 +48,8 @@ class BufferConversion extends BinaryConversion<Uint8List> {
 
   @override
   void flush() {
-    if (_builder.isNotEmpty) throw 'flushed while converting buffer';
+    if (_builder.isNotEmpty) {
+      throw StateError('Flushed while converting buffer');
+    }
   }
 }

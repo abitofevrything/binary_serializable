@@ -65,6 +65,6 @@ class _ArrayConversion<T> extends BinaryConversion<List<T>> {
   @override
   void flush() {
     conversion.flush();
-    if (index != 0) throw 'pending array conversion';
+    if (index != 0) throw StateError('Pending array conversion');
   }
 }

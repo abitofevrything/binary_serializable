@@ -54,7 +54,7 @@ class _MagicConversion extends BinaryConversion<Uint8List> {
     var offset = 0;
     while (index < magic.length && offset < data.length) {
       if (magic[index] != data[offset]) {
-        throw 'bad magic bytes';
+        throw FormatException('Bad magic bytes');
       }
 
       offset++;
@@ -72,7 +72,7 @@ class _MagicConversion extends BinaryConversion<Uint8List> {
   @override
   void flush() {
     if (index != 0) {
-      throw 'flush while reading magic';
+      throw StateError('Flushed while reading magic');
     }
   }
 }
