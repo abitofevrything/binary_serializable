@@ -30,48 +30,28 @@ class _BinaryDecoder<T> extends Converter<List<int>, T> {
 
   @override
   T convert(List<int> input) {
-    if (input is! Uint8List) {
-      input = Uint8List.fromList(input);
-    }
+    if (input is! Uint8List) input = Uint8List.fromList(input);
 
-    const sentinel = #_sentinel;
+    late T result;
+    var didConvert = false;
 
-    Object? result = sentinel;
-    void setResult(T value) => result = value;
+    final conversion = type.startConversion((value) {
+      result = value;
+      didConvert = true;
+      assert(!didConvert, 'Already converted value');
+    });
 
-    final conversion = type.startConversion(setResult);
     final consumed = conversion.add(input);
-    conversion.flush();
 
-    if (consumed != input.length) {
-      throw 'too much data';
-    }
+    assert(consumed == input.length, 'Too much data to decode');
+    assert(didConvert, 'Not enough data to decode');
 
-    if (identical(sentinel, result)) {
-      throw 'not enough data';
-    }
-
-    return result as T;
+    return result;
   }
 
   @override
-  Sink<List<int>> startChunkedConversion(Sink<T> sink) {
-    final conversion = type.startConversion(sink.add);
-
-    return _CallbackSink(
-      (data) {
-        if (data is! Uint8List) {
-          data = Uint8List.fromList(data);
-        }
-
-        conversion.addAll(data);
-      },
-      () {
-        conversion.flush();
-        sink.close();
-      },
-    );
-  }
+  Sink<List<int>> startChunkedConversion(Sink<T> sink) =>
+      _DecodeSink(sink, type);
 }
 
 class _BinaryEncoder<T> extends Converter<T, Uint8List> {
@@ -83,21 +63,40 @@ class _BinaryEncoder<T> extends Converter<T, Uint8List> {
   Uint8List convert(T input) => type.encode(input);
 
   @override
-  Sink<T> startChunkedConversion(Sink<Uint8List> sink) => _CallbackSink(
-        (data) => sink.add(convert(data)),
-        sink.close,
-      );
+  Sink<T> startChunkedConversion(Sink<Uint8List> sink) =>
+      _EncodeSink(sink, type);
 }
 
-class _CallbackSink<T> implements Sink<T> {
-  final void Function(T) onData;
-  final void Function() onClose;
+class _DecodeSink<T> implements Sink<List<int>> {
+  final BinaryConversion<T> conversion;
+  final Sink<T> sink;
 
-  _CallbackSink(this.onData, this.onClose);
-
-  @override
-  void add(T data) => onData(data);
+  _DecodeSink(this.sink, BinaryType<T> type)
+      : conversion = type.startConversion(sink.add);
 
   @override
-  void close() => onClose();
+  void add(List<int> data) {
+    if (data is! Uint8List) data = Uint8List.fromList(data);
+
+    conversion.addAll(data);
+  }
+
+  @override
+  void close() {
+    conversion.flush();
+    sink.close();
+  }
+}
+
+class _EncodeSink<T> implements Sink<T> {
+  final BinaryType<T> type;
+  final Sink<Uint8List> sink;
+
+  _EncodeSink(this.sink, this.type);
+
+  @override
+  void add(T data) => sink.add(type.encode(data));
+
+  @override
+  void close() => sink.close();
 }

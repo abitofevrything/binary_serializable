@@ -28,5 +28,12 @@ class _BoolConversion extends BinaryConversion<bool> {
   }
 
   @override
+  void addAll(Uint8List data) {
+    for (final value in data) {
+      onValue(value != 0);
+    }
+  }
+
+  @override
   void flush() {}
 }

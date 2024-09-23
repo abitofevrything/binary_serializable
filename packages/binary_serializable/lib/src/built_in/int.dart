@@ -86,7 +86,14 @@ class _IntegerConversion extends BinaryConversion<int> {
 
   @override
   int add(Uint8List data) {
-    if (index + data.length >= type.width) {
+    if (index == 0 && data.length >= type.width) {
+      onValue(type.getValue(
+        data.offsetInBytes,
+        data.buffer.asByteData(),
+        type.endian,
+      ));
+      return type.width;
+    } else if (index + data.length >= type.width) {
       buffer.setRange(index, buffer.length, data);
       onValue(type.getValue(0, buffer.buffer.asByteData(), type.endian));
       final consumed = buffer.length - index;
@@ -97,6 +104,21 @@ class _IntegerConversion extends BinaryConversion<int> {
       index += data.length;
       return data.length;
     }
+  }
+
+  @override
+  void addAll(Uint8List data) {
+    // Make sure we have no data left in [buffer].
+    var consumed = add(data);
+
+    final wholeElementCount = (data.length - consumed) ~/ type.width;
+    final buffer = data.buffer.asByteData(data.offsetInBytes + consumed);
+    for (int i = 0; i < wholeElementCount; i++) {
+      onValue(type.getValue(i * type.width, buffer, type.endian));
+    }
+
+    // Add any remaining data.
+    add(Uint8List.sublistView(data, consumed + wholeElementCount * type.width));
   }
 
   @override
@@ -124,6 +146,13 @@ class _Uint8Conversion extends BinaryConversion<int> {
     if (data.isEmpty) return 0;
     onValue(data[0]);
     return 1;
+  }
+
+  @override
+  void addAll(Uint8List data) {
+    for (final value in data) {
+      onValue(value);
+    }
   }
 
   @override
