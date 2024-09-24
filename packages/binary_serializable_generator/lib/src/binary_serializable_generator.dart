@@ -142,7 +142,7 @@ class BinarySerializableEmitter {
         if (value == null || type == null) {
           // Tentatively assume the error was due to referencing a
           // yet-ungenerated BinaryType.
-          binaryTypeAnnotation ??= binaryTypeAnnotation;
+          binaryTypeAnnotation ??= annotation;
         } else if (binaryType.isAssignableFromType(type)) {
           if (wasComputed) {
             throw '${element.name}.$fieldName cannot have more than one BinaryType annotation';
@@ -468,8 +468,6 @@ class BinarySerializableEmitter {
           !element.interfaces.contains(clazz.thisType)) {
         continue;
       }
-
-      print('${clazz.name}: Subtype ${element.name}');
 
       result.addAll(await getSubtype(preludeFields, element, inLibrary));
     }
