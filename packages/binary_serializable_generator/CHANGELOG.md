@@ -1,3 +1,7 @@
+## 0.3.1
+
+- Bump dependencies.
+
 ## 0.3.0
 
 - Add support for type parameters.

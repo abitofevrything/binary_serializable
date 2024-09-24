@@ -1,3 +1,7 @@
+## 0.3.1
+
+- Bump dependencies.
+
 ## 0.3.0
 
 - Fix a bug in CompositeBinaryConversion causing the input buffer to not be consumed properly.
