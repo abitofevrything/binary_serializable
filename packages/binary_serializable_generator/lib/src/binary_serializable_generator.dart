@@ -53,11 +53,11 @@ class BinarySerializableGenerator
       throw '${element.name}: @BinarySerializable() may only be applied to classes';
     }
 
-    final constructor = node.members.whereType<ConstructorDeclaration>().first;
-
     if (node.abstractKeyword != null) {
       return await BinarySerializableEmitter(buildStep).generateMultiType(node);
     }
+
+    final constructor = node.members.whereType<ConstructorDeclaration>().first;
 
     return await BinarySerializableEmitter(buildStep)
         .generateType(node, constructor);
