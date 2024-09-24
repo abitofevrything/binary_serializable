@@ -105,6 +105,10 @@ class IntegerType extends BinaryType<int> {
   }
 
   @override
+  void encodeInto(int input, BytesBuilder builder) =>
+      builder.add(encode(input));
+
+  @override
   BinaryConversion<int> startConversion(void Function(int) onValue) =>
       _IntegerConversion(this, onValue);
 }
@@ -150,7 +154,9 @@ class _IntegerConversion extends BinaryConversion<int> {
     }
 
     // Add any remaining data.
-    add(Uint8List.sublistView(data, consumed + wholeElementCount * type.width));
+    add(data.buffer.asUint8List(
+      data.offsetInBytes + consumed + wholeElementCount * type.width,
+    ));
   }
 
   @override
@@ -168,7 +174,7 @@ class _Uint8Type extends BinaryType<int> {
   const _Uint8Type();
 
   @override
-  Uint8List encode(input) => Uint8List(1)..[0] = input;
+  void encodeInto(int input, BytesBuilder builder) => builder.addByte(input);
 
   @override
   BinaryConversion<int> startConversion(void Function(int p1) onValue) =>

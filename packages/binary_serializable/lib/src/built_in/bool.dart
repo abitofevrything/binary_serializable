@@ -14,9 +14,8 @@ class BoolType extends BinaryType<bool> {
   const BoolType();
 
   @override
-  Uint8List encode(bool input) {
-    return Uint8List(1)..[0] = input ? 1 : 0;
-  }
+  void encodeInto(bool input, BytesBuilder builder) =>
+      builder.addByte(input ? 1 : 0);
 
   @override
   BinaryConversion<bool> startConversion(void Function(bool) onValue) =>

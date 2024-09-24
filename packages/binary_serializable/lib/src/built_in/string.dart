@@ -27,10 +27,9 @@ class NullTerminatedStringType extends BinaryType<String> {
   const NullTerminatedStringType(this.codec);
 
   @override
-  Uint8List encode(String input) {
-    final content = codec.encode(input);
-    return Uint8List(content.length + 1)..setAll(0, content);
-  }
+  void encodeInto(String input, BytesBuilder builder) => builder
+    ..add(codec.encode(input))
+    ..addByte(0);
 
   @override
   BinaryConversion<String> startConversion(void Function(String p1) onValue) =>
@@ -51,7 +50,7 @@ class _NullTerminatedStringConversion extends BinaryConversion<String> {
       return data.length;
     }
 
-    builder.add(Uint8List.sublistView(data, 0, nullIndex));
+    builder.add(data.buffer.asUint8List(data.offsetInBytes, nullIndex));
 
     onValue(type.codec.decode(builder.takeBytes()));
 

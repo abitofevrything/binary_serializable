@@ -49,16 +49,14 @@ void main() {
 // binary_serializable_generator.
 
 class PersonType extends BinaryType<Person> {
+  const PersonType();
+
   @override
-  Uint8List encode(Person input) {
-    final builder = BytesBuilder();
-
-    builder
-      ..add(utf8String.encode(input.name))
-      ..add(uint8.encode(input.age))
-      ..add(LengthPrefixedListType(uint8, PersonType()).encode(input.children));
-
-    return builder.toBytes();
+  void encodeInto(Person input, BytesBuilder builder) {
+    utf8String.encodeInto(input.name, builder);
+    uint8.encodeInto(input.age, builder);
+    const LengthPrefixedListType(uint8, PersonType())
+        .encodeInto(input.children, builder);
   }
 
   @override
@@ -73,7 +71,7 @@ class PersonConversion extends CompositeBinaryConversion<Person> {
   BinaryConversion startConversion() {
     return utf8String.startConversion((name) {
       currentConversion = uint8.startConversion((age) {
-        currentConversion = LengthPrefixedListType(uint8, PersonType())
+        currentConversion = const LengthPrefixedListType(uint8, PersonType())
             .startConversion((children) {
           onValue(Person(name: name, age: age, children: children));
         });

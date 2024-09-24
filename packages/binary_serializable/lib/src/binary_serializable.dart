@@ -41,8 +41,9 @@ class Generic extends BinaryType<Never> {
   const Generic(this.name);
 
   @override
-  Uint8List encode(input) => throw UnimplementedError(
-      'Generic() types should be replaced by code generation');
+  Uint8List encodeInto(Never input, BytesBuilder builder) =>
+      throw UnimplementedError(
+          'Generic() types should be replaced by code generation');
 
   @override
   BinaryConversion<Never> startConversion(void Function(Never p1) onValue) =>

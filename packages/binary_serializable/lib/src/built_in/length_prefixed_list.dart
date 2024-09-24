@@ -16,13 +16,11 @@ class LengthPrefixedListType<T> extends BinaryType<List<T>> {
   const LengthPrefixedListType(this.lengthType, this.type);
 
   @override
-  Uint8List encode(List<T> input) {
-    final builder = BytesBuilder(copy: false);
-    builder.add(lengthType.encode(input.length));
+  void encodeInto(List<T> input, BytesBuilder builder) {
+    lengthType.encodeInto(input.length, builder);
     for (final element in input) {
-      builder.add(type.encode(element));
+      type.encodeInto(element, builder);
     }
-    return builder.takeBytes();
   }
 
   @override
@@ -52,7 +50,8 @@ class _ListConversion<T> extends BinaryConversion<List<T>> {
     }
 
     do {
-      offset += conversion.add(Uint8List.sublistView(data, offset));
+      offset +=
+          conversion.add(data.buffer.asUint8List(data.offsetInBytes + offset));
     } while (index != 0 && offset < data.length);
 
     return offset;

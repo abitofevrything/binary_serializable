@@ -65,6 +65,10 @@ class FloatType extends BinaryType<double> {
   }
 
   @override
+  void encodeInto(double input, BytesBuilder builder) =>
+      builder.add(encode(input));
+
+  @override
   BinaryConversion<double> startConversion(void Function(double) onValue) =>
       _FloatConversion(this, onValue);
 }

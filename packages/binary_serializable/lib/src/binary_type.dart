@@ -2,14 +2,13 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:binary_serializable/src/binary_conversion.dart';
-import 'package:meta/meta.dart';
 
 /// {@template binary_type}
 /// A [Codec] specialized for converting binary data.
 ///
 /// [BinaryType] may be used as a supertype for any codec implementing binary
 /// serialization and deserialization based on a [BinaryConversion] and an
-/// [encode] method.
+/// [encodeInto] method.
 ///
 /// To decode a stream of binary data, call [Stream.transform] with [decoder]
 /// (`stream.transform(type.decoder)`).
@@ -25,8 +24,17 @@ abstract class BinaryType<T> extends Codec<T, List<int>> {
   BinaryConversion<T> startConversion(void Function(T) onValue);
 
   @override
-  @mustBeOverridden
-  Uint8List encode(T input);
+  Uint8List encode(T input) {
+    final builder = BytesBuilder(copy: false);
+    encodeInto(input, builder);
+    return builder.takeBytes();
+  }
+
+  /// Encode [input] into [builder].
+  ///
+  /// The bytes representing [input] should be written to [builder] in the order
+  /// they would be written
+  void encodeInto(T input, BytesBuilder builder);
 
   /// Decode a single value from [stream].
   ///

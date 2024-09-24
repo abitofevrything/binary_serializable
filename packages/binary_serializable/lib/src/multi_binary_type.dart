@@ -48,7 +48,7 @@ abstract class MultiBinaryType<T, U> extends BinaryType<T> {
   BinaryConversion<U> startPreludeConversion(void Function(U) onValue);
 
   @override
-  Uint8List encode(input) {
+  void encodeInto(T input, BytesBuilder builder) {
     final prelude = extractPrelude(input);
     final subtype = subtypes[prelude];
 
@@ -56,7 +56,7 @@ abstract class MultiBinaryType<T, U> extends BinaryType<T> {
       throw FormatException('No subtype matching $prelude found');
     }
 
-    return subtype.encode(input);
+    subtype.encodeInto(input, builder);
   }
 
   @override
@@ -94,7 +94,7 @@ class _MultiBinaryConversion<T, U> extends BinaryConversion<T> {
 
     if (identical(_currentConversion, _preludeConversion)) {
       consumed += _preludeConversion.add(data);
-      _preludeBytes.add(Uint8List.sublistView(data, 0, consumed));
+      _preludeBytes.add(data.buffer.asUint8List(data.offsetInBytes, consumed));
 
       if (identical(_currentConversion, _preludeConversion)) {
         assert(
@@ -124,7 +124,7 @@ class _MultiBinaryConversion<T, U> extends BinaryConversion<T> {
 
         // Update the chunk so we don't add data we've already copied into the
         // subtype conversion again.
-        data = Uint8List.sublistView(data, consumed);
+        data = data.buffer.asUint8List(data.offsetInBytes + consumed);
       }
     }
 

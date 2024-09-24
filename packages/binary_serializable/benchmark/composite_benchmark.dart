@@ -45,42 +45,62 @@ Composite4 generateComposite4() => Composite4(
     );
 
 void main() {
-  benchmarkBinaryType(
+  // benchmarkBinaryType(
+  //   'CompositeBinaryType',
+  //   Composite1Type(),
+  //   generate: generateComposite1,
+  // );
+
+  DecodeAllBenchmark(
     'CompositeBinaryType',
     Composite1Type(),
-    generate: generateComposite1,
-  );
+    generateComposite1,
+    count: 100 * oneMegabyte,
+  ).report();
 }
 
+@BinarySerializable()
 class Composite1 {
+  @uint64
   final int f1;
 
+  @Composite2Type()
   final Composite2 f2;
 
+  @Composite4Type()
   final Composite4 f3;
 
   Composite1(this.f1, this.f2, this.f3);
 }
 
+@BinarySerializable()
 class Composite2 {
+  @BoolType()
   final bool f1;
 
+  @Composite3Type()
   final Composite3 f2;
 
+  @asciiString
   final String f3, f4, f5, f6;
 
   Composite2(this.f1, this.f2, this.f3, this.f4, this.f5, this.f6);
 }
 
+@BinarySerializable()
 class Composite3 {
+  @LengthPrefixedListType(uint8, Composite3Type())
   final List<Composite3> f1;
 
   Composite3(this.f1);
 }
 
+@BinarySerializable()
 class Composite4 {
+  @utf8String
   final String f1;
 
+  @ArrayType(5, uint64)
   final List<int> f2;
 
   Composite4({required this.f1, required this.f2});
@@ -92,12 +112,22 @@ class Composite1Type extends BinaryType<Composite1> {
   const Composite1Type();
 
   @override
-  Uint8List encode(Composite1 input) {
-    final builder = BytesBuilder(copy: false);
-    builder.add(uint64.encode(input.f1));
-    builder.add(const Composite2Type().encode(input.f2));
-    builder.add(const Composite4Type().encode(input.f3));
-    return builder.takeBytes();
+  void encodeInto(
+    Composite1 input,
+    BytesBuilder builder,
+  ) {
+    uint64.encodeInto(
+      input.f1,
+      builder,
+    );
+    const Composite2Type().encodeInto(
+      input.f2,
+      builder,
+    );
+    const Composite4Type().encodeInto(
+      input.f3,
+      builder,
+    );
   }
 
   @override
@@ -138,15 +168,34 @@ class Composite2Type extends BinaryType<Composite2> {
   const Composite2Type();
 
   @override
-  Uint8List encode(Composite2 input) {
-    final builder = BytesBuilder(copy: false);
-    builder.add(const BoolType().encode(input.f1));
-    builder.add(const Composite3Type().encode(input.f2));
-    builder.add(asciiString.encode(input.f3));
-    builder.add(asciiString.encode(input.f4));
-    builder.add(asciiString.encode(input.f5));
-    builder.add(asciiString.encode(input.f6));
-    return builder.takeBytes();
+  void encodeInto(
+    Composite2 input,
+    BytesBuilder builder,
+  ) {
+    const BoolType().encodeInto(
+      input.f1,
+      builder,
+    );
+    const Composite3Type().encodeInto(
+      input.f2,
+      builder,
+    );
+    asciiString.encodeInto(
+      input.f3,
+      builder,
+    );
+    asciiString.encodeInto(
+      input.f4,
+      builder,
+    );
+    asciiString.encodeInto(
+      input.f5,
+      builder,
+    );
+    asciiString.encodeInto(
+      input.f6,
+      builder,
+    );
   }
 
   @override
@@ -196,15 +245,20 @@ class Composite3Type extends BinaryType<Composite3> {
   const Composite3Type();
 
   @override
-  Uint8List encode(Composite3 input) {
-    final builder = BytesBuilder(copy: false);
-    builder.add(const LengthPrefixedListType(
+  void encodeInto(
+    Composite3 input,
+    BytesBuilder builder,
+  ) {
+    const LengthPrefixedListType(
       uint8,
       Composite3Type(),
-    ).encode(input.f1));
-    return builder.takeBytes();
+    ).encodeInto(
+      input.f1,
+      builder,
+    );
   }
 
+  @override
   BinaryConversion<Composite3> startConversion(
           void Function(Composite3) onValue) =>
       _Composite3Conversion(
@@ -237,14 +291,21 @@ class Composite4Type extends BinaryType<Composite4> {
   const Composite4Type();
 
   @override
-  Uint8List encode(Composite4 input) {
-    final builder = BytesBuilder(copy: false);
-    builder.add(utf8String.encode(input.f1));
-    builder.add(const ArrayType(
+  void encodeInto(
+    Composite4 input,
+    BytesBuilder builder,
+  ) {
+    utf8String.encodeInto(
+      input.f1,
+      builder,
+    );
+    const ArrayType(
       5,
       uint64,
-    ).encode(input.f2));
-    return builder.takeBytes();
+    ).encodeInto(
+      input.f2,
+      builder,
+    );
   }
 
   @override

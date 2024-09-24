@@ -370,38 +370,31 @@ class BinarySerializableEmitter {
           Method(
             (builder) => builder
               ..annotations.replace([refer('override')])
-              ..returns = refer('Uint8List')
-              ..name = 'encode'
+              ..returns = refer('void')
+              ..name = 'encodeInto'
               ..requiredParameters.replace([
                 Parameter(
                   (builder) => builder
                     ..type = targetType
                     ..name = 'input',
-                )
+                ),
+                Parameter(
+                  (builder) => builder
+                    ..type = refer('BytesBuilder')
+                    ..name = 'builder',
+                ),
               ])
               ..body = code_builder.Block(
                 (builder) => builder.statements.replace([
-                  declareFinal('builder')
-                      .assign(
-                        refer('BytesBuilder').call([], {'copy': literalFalse}),
-                      )
-                      .statement,
                   for (final field in fields)
-                    refer('builder').property('add').call([
-                      rewriteGenericExpressions(
-                        field.binaryType,
-                        (generic) =>
-                            refer(genericAllocations[generic.genericType]!),
-                      )
-                          .$1
-                          .property('encode')
-                          .call([refer('input').property(field.name)])
+                    rewriteGenericExpressions(
+                      field.binaryType,
+                      (generic) =>
+                          refer(genericAllocations[generic.genericType]!),
+                    ).$1.property('encodeInto').call([
+                      refer('input').property(field.name),
+                      refer('builder'),
                     ]).statement,
-                  refer('builder')
-                      .property('takeBytes')
-                      .call([])
-                      .returned
-                      .statement,
                 ]),
               ),
           ),
@@ -436,10 +429,7 @@ class BinarySerializableEmitter {
     );
 
     final emitter = DartEmitter(useNullSafetySyntax: true);
-    final sink = StringBuffer()
-      ..writeln(
-          '// ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore')
-      ..writeln();
+    final sink = StringBuffer();
 
     type.accept(emitter, sink);
     conversion.accept(emitter, sink);
@@ -761,10 +751,7 @@ class BinarySerializableEmitter {
         ]),
     );
 
-    final buffer = StringBuffer()
-      ..writeln(
-          '// ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore')
-      ..writeln();
+    final buffer = StringBuffer();
     final emitter = DartEmitter();
 
     type.accept(emitter, buffer);

@@ -8,12 +8,10 @@ import 'harness.dart';
 
 class _TestType extends BinaryType<(int, String, bool)> {
   @override
-  Uint8List encode(input) {
-    final builder = BytesBuilder();
-    builder.add(uint8.encode(input.$1));
-    builder.add(utf8String.encode(input.$2));
-    builder.add(BoolType().encode(input.$3));
-    return builder.toBytes();
+  void encodeInto((int, String, bool) input, BytesBuilder builder) {
+    uint8.encodeInto(input.$1, builder);
+    utf8String.encodeInto(input.$2, builder);
+    BoolType().encodeInto(input.$3, builder);
   }
 
   @override

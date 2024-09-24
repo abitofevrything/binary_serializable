@@ -6,21 +6,29 @@ part of 'example.dart';
 // BinarySerializableGenerator
 // **************************************************************************
 
-// ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
-
 class ExampleType extends BinaryType<Example> {
   const ExampleType();
 
   @override
-  Uint8List encode(Example input) {
-    final builder = BytesBuilder(copy: false);
-    builder.add(uint64.encode(input.id));
-    builder.add(utf8String.encode(input.name));
-    builder.add(const LengthPrefixedListType(
+  void encodeInto(
+    Example input,
+    BytesBuilder builder,
+  ) {
+    uint64.encodeInto(
+      input.id,
+      builder,
+    );
+    utf8String.encodeInto(
+      input.name,
+      builder,
+    );
+    const LengthPrefixedListType(
       uint8,
       utf8String,
-    ).encode(input.tags));
-    return builder.takeBytes();
+    ).encodeInto(
+      input.tags,
+      builder,
+    );
   }
 
   @override
@@ -59,8 +67,6 @@ class _ExampleConversion extends CompositeBinaryConversion<Example> {
   }
 }
 
-// ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
-
 class GenericTypeType<T, U> extends BinaryType<GenericType<T, U>> {
   const GenericTypeType(
     this.genericTypeU,
@@ -72,14 +78,21 @@ class GenericTypeType<T, U> extends BinaryType<GenericType<T, U>> {
   final BinaryType<T> genericTypeT;
 
   @override
-  Uint8List encode(GenericType<T, U> input) {
-    final builder = BytesBuilder(copy: false);
-    builder.add(genericTypeT.encode(input.genericField));
-    builder.add(LengthPrefixedListType(
+  void encodeInto(
+    GenericType<T, U> input,
+    BytesBuilder builder,
+  ) {
+    genericTypeT.encodeInto(
+      input.genericField,
+      builder,
+    );
+    LengthPrefixedListType(
       uint8,
       genericTypeU,
-    ).encode(input.genericList));
-    return builder.takeBytes();
+    ).encodeInto(
+      input.genericList,
+      builder,
+    );
   }
 
   @override
@@ -117,8 +130,6 @@ class _GenericTypeConversion<T, U>
   }
 }
 
-// ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
-
 class MessageType extends MultiBinaryType<Message, int> {
   const MessageType([super.subtypes = MessageType.defaultSubtypes]);
 
@@ -154,17 +165,22 @@ class _MessagePreludeConversion extends CompositeBinaryConversion<int> {
   }
 }
 
-// ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
-
 class StringMessageType extends BinaryType<StringMessage> {
   const StringMessageType();
 
   @override
-  Uint8List encode(StringMessage input) {
-    final builder = BytesBuilder(copy: false);
-    builder.add(uint8.encode(input.id));
-    builder.add(utf8String.encode(input.data));
-    return builder.takeBytes();
+  void encodeInto(
+    StringMessage input,
+    BytesBuilder builder,
+  ) {
+    uint8.encodeInto(
+      input.id,
+      builder,
+    );
+    utf8String.encodeInto(
+      input.data,
+      builder,
+    );
   }
 
   @override
@@ -200,17 +216,22 @@ class _StringMessageConversion
   }
 }
 
-// ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
-
 class IntegerMessageType extends BinaryType<IntegerMessage> {
   const IntegerMessageType();
 
   @override
-  Uint8List encode(IntegerMessage input) {
-    final builder = BytesBuilder(copy: false);
-    builder.add(uint8.encode(input.id));
-    builder.add(int64.encode(input.data));
-    return builder.takeBytes();
+  void encodeInto(
+    IntegerMessage input,
+    BytesBuilder builder,
+  ) {
+    uint8.encodeInto(
+      input.id,
+      builder,
+    );
+    int64.encodeInto(
+      input.data,
+      builder,
+    );
   }
 
   @override

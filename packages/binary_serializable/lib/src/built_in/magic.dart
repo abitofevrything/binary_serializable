@@ -23,7 +23,7 @@ abstract class Magic extends BinaryType<Uint8List> {
   Uint8List getMagic();
 
   @override
-  Uint8List encode(Uint8List input) => input;
+  void encodeInto(Uint8List input, BytesBuilder builder) => builder.add(input);
 
   @override
   BinaryConversion<Uint8List> startConversion(

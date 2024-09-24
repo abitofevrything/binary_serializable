@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:benchmark_harness/benchmark_harness.dart';
 import 'package:binary_serializable/binary_serializable.dart';
 import 'package:pretty_bytes/pretty_bytes.dart';
@@ -110,9 +112,10 @@ class DecodeAllBenchmark<T> extends BinarySerializableBenchmark {
   void setup() {
     final builder = BytesBuilder(copy: false);
     while (builder.length < count) {
-      builder.add(type.encode(generate()));
+      type.encodeInto(generate(), builder);
     }
     data = builder.takeBytes();
+    debugger();
   }
 
   @override

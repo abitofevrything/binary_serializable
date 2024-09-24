@@ -21,11 +21,9 @@ class _TestLengthPrefixedBufferType extends BinaryType<Uint8List> {
   _TestLengthPrefixedBufferType(this.length);
 
   @override
-  Uint8List encode(Uint8List input) {
-    final builder = BytesBuilder();
-    builder.add(uint8.encode(input.length));
+  void encodeInto(Uint8List input, BytesBuilder builder) {
+    uint8.encodeInto(input.length, builder);
     builder.add(input);
-    return builder.takeBytes();
   }
 
   @override
