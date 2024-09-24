@@ -14,8 +14,12 @@ class ExampleType extends BinaryType<Example> {
   @override
   Uint8List encode(Example input) {
     final builder = BytesBuilder(copy: false);
-    builder.add(uint8.encode(input.type));
-    builder.add(const BufferType(256).encode(input.data));
+    builder.add(uint64.encode(input.id));
+    builder.add(utf8String.encode(input.name));
+    builder.add(const LengthPrefixedListType(
+      uint8,
+      utf8String,
+    ).encode(input.tags));
     return builder.takeBytes();
   }
 
@@ -37,11 +41,75 @@ class _ExampleConversion extends CompositeBinaryConversion<Example> {
 
   @override
   BinaryConversion startConversion() {
-    return uint8.startConversion((type) {
-      currentConversion = const BufferType(256).startConversion((data) {
-        final instance = Example(
-          type,
-          data,
+    return uint64.startConversion((id) {
+      currentConversion = utf8String.startConversion((name) {
+        currentConversion = const LengthPrefixedListType(
+          uint8,
+          utf8String,
+        ).startConversion((tags) {
+          final instance = Example(
+            id,
+            name,
+            tags,
+          );
+          onValue(instance);
+        });
+      });
+    });
+  }
+}
+
+// ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
+
+class GenericTypeType<T, U> extends BinaryType<GenericType<T, U>> {
+  const GenericTypeType(
+    this.genericTypeU,
+    this.genericTypeT,
+  );
+
+  final BinaryType<U> genericTypeU;
+
+  final BinaryType<T> genericTypeT;
+
+  @override
+  Uint8List encode(GenericType<T, U> input) {
+    final builder = BytesBuilder(copy: false);
+    builder.add(genericTypeT.encode(input.genericField));
+    builder.add(LengthPrefixedListType(
+      uint8,
+      genericTypeU,
+    ).encode(input.genericList));
+    return builder.takeBytes();
+  }
+
+  @override
+  BinaryConversion<GenericType<T, U>> startConversion(
+          void Function(GenericType<T, U>) onValue) =>
+      _GenericTypeConversion(
+        this,
+        onValue,
+      );
+}
+
+class _GenericTypeConversion<T, U>
+    extends CompositeBinaryConversion<GenericType<T, U>> {
+  _GenericTypeConversion(
+    this.type,
+    super.onValue,
+  );
+
+  final GenericTypeType<T, U> type;
+
+  @override
+  BinaryConversion startConversion() {
+    return type.genericTypeT.startConversion((genericField) {
+      currentConversion = LengthPrefixedListType(
+        uint8,
+        type.genericTypeU,
+      ).startConversion((genericList) {
+        final instance = GenericType<T, U>(
+          genericField,
+          genericList,
         );
         onValue(instance);
       });
@@ -51,115 +119,82 @@ class _ExampleConversion extends CompositeBinaryConversion<Example> {
 
 // ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
 
-class BaseType extends MultiBinaryType<Base, (int, int)> {
-  const BaseType([super.subtypes = BaseType.defaultSubtypes]);
+class MessageType extends MultiBinaryType<Message, int> {
+  const MessageType([super.subtypes = MessageType.defaultSubtypes]);
 
-  static const Map<(int, int), BinaryType<Base>> defaultSubtypes = {
-    (
-      1,
-      0,
-    ): AType(),
-    (
-      2,
-      2,
-    ): BType(),
+  static const Map<int, BinaryType<Message>> defaultSubtypes = {
+    2: StringMessageType(),
+    1: IntegerMessageType(),
   };
 
   @override
-  (int, int) extractPrelude(Base instance) => (
-        instance.id,
-        instance.subId,
-      );
+  int extractPrelude(Message instance) => instance.id;
 
   @override
-  BinaryConversion<(int, int)> startPreludeConversion(
-          void Function((int, int)) onValue) =>
-      _BasePreludeConversion(
+  BinaryConversion<int> startPreludeConversion(void Function(int) onValue) =>
+      _MessagePreludeConversion(
         this,
         onValue,
       );
 }
 
-class _BasePreludeConversion extends CompositeBinaryConversion<(int, int)> {
-  _BasePreludeConversion(
+class _MessagePreludeConversion extends CompositeBinaryConversion<int> {
+  _MessagePreludeConversion(
     this.type,
     super.onValue,
   );
 
-  final BaseType type;
+  final MessageType type;
 
   @override
   BinaryConversion startConversion() {
-    return int32.startConversion((concrete) {
-      currentConversion = int32.startConversion((id) {
-        currentConversion = int32.startConversion((concreteAgain) {
-          currentConversion = int32.startConversion((subId) {
-            onValue((
-              id,
-              subId,
-            ));
-          });
-        });
-      });
+    return uint8.startConversion((id) {
+      onValue(id);
     });
   }
 }
 
 // ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
 
-class AType extends BinaryType<A> {
-  const AType();
+class StringMessageType extends BinaryType<StringMessage> {
+  const StringMessageType();
 
   @override
-  Uint8List encode(A input) {
+  Uint8List encode(StringMessage input) {
     final builder = BytesBuilder(copy: false);
-    builder.add(int32.encode(input.concrete));
-    builder.add(int32.encode(input.id));
-    builder.add(int32.encode(input.concreteAgain));
-    builder.add(int32.encode(input.subId));
-    builder.add(int32.encode(input.aSpecific));
+    builder.add(uint8.encode(input.id));
+    builder.add(utf8String.encode(input.data));
     return builder.takeBytes();
   }
 
   @override
-  BinaryConversion<A> startConversion(void Function(A) onValue) => _AConversion(
+  BinaryConversion<StringMessage> startConversion(
+          void Function(StringMessage) onValue) =>
+      _StringMessageConversion(
         this,
         onValue,
       );
 }
 
-class _AConversion extends CompositeBinaryConversion<A> {
-  _AConversion(
+class _StringMessageConversion
+    extends CompositeBinaryConversion<StringMessage> {
+  _StringMessageConversion(
     this.type,
     super.onValue,
   );
 
-  final AType type;
+  final StringMessageType type;
 
   @override
   BinaryConversion startConversion() {
-    return int32.startConversion((concrete) {
-      currentConversion = int32.startConversion((id) {
-        currentConversion = int32.startConversion((concreteAgain) {
-          currentConversion = int32.startConversion((subId) {
-            currentConversion = int32.startConversion((aSpecific) {
-              final instance = A(
-                concrete: concrete,
-                concreteAgain: concreteAgain,
-                aSpecific: aSpecific,
-              );
-              if (instance.id != id) {
-                throw 'parsed field id does not match predefined value';
-              }
+    return uint8.startConversion((id) {
+      currentConversion = utf8String.startConversion((data) {
+        final instance = StringMessage(data);
+        if (instance.id != id) {
+          throw 'parsed field id does not match predefined value';
+        }
 
-              if (instance.subId != subId) {
-                throw 'parsed field subId does not match predefined value';
-              }
-
-              onValue(instance);
-            });
-          });
-        });
+        onValue(instance);
       });
     });
   }
@@ -167,201 +202,45 @@ class _AConversion extends CompositeBinaryConversion<A> {
 
 // ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
 
-class BType extends MultiBinaryType<B, (int, int, int)> {
-  const BType([super.subtypes = BType.defaultSubtypes]);
-
-  static const Map<(int, int, int), BinaryType<B>> defaultSubtypes = {
-    (
-      2,
-      2,
-      3,
-    ): CType(),
-    (
-      2,
-      2,
-      4,
-    ): DType(),
-  };
+class IntegerMessageType extends BinaryType<IntegerMessage> {
+  const IntegerMessageType();
 
   @override
-  (int, int, int) extractPrelude(B instance) => (
-        instance.id,
-        instance.subId,
-        instance.bId,
-      );
-
-  @override
-  BinaryConversion<(int, int, int)> startPreludeConversion(
-          void Function((int, int, int)) onValue) =>
-      _BPreludeConversion(
-        this,
-        onValue,
-      );
-}
-
-class _BPreludeConversion extends CompositeBinaryConversion<(int, int, int)> {
-  _BPreludeConversion(
-    this.type,
-    super.onValue,
-  );
-
-  final BType type;
-
-  @override
-  BinaryConversion startConversion() {
-    return int32.startConversion((concrete) {
-      currentConversion = int32.startConversion((id) {
-        currentConversion = int32.startConversion((concreteAgain) {
-          currentConversion = int32.startConversion((subId) {
-            currentConversion = int32.startConversion((bSpecific) {
-              currentConversion = int32.startConversion((bId) {
-                onValue((
-                  id,
-                  subId,
-                  bId,
-                ));
-              });
-            });
-          });
-        });
-      });
-    });
-  }
-}
-
-// ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
-
-class CType extends BinaryType<C> {
-  const CType();
-
-  @override
-  Uint8List encode(C input) {
+  Uint8List encode(IntegerMessage input) {
     final builder = BytesBuilder(copy: false);
-    builder.add(int32.encode(input.concrete));
-    builder.add(int32.encode(input.id));
-    builder.add(int32.encode(input.concreteAgain));
-    builder.add(int32.encode(input.subId));
-    builder.add(int32.encode(input.bSpecific));
-    builder.add(int32.encode(input.bId));
+    builder.add(uint8.encode(input.id));
+    builder.add(int64.encode(input.data));
     return builder.takeBytes();
   }
 
   @override
-  BinaryConversion<C> startConversion(void Function(C) onValue) => _CConversion(
+  BinaryConversion<IntegerMessage> startConversion(
+          void Function(IntegerMessage) onValue) =>
+      _IntegerMessageConversion(
         this,
         onValue,
       );
 }
 
-class _CConversion extends CompositeBinaryConversion<C> {
-  _CConversion(
+class _IntegerMessageConversion
+    extends CompositeBinaryConversion<IntegerMessage> {
+  _IntegerMessageConversion(
     this.type,
     super.onValue,
   );
 
-  final CType type;
+  final IntegerMessageType type;
 
   @override
   BinaryConversion startConversion() {
-    return int32.startConversion((concrete) {
-      currentConversion = int32.startConversion((id) {
-        currentConversion = int32.startConversion((concreteAgain) {
-          currentConversion = int32.startConversion((subId) {
-            currentConversion = int32.startConversion((bSpecific) {
-              currentConversion = int32.startConversion((bId) {
-                final instance = C(
-                  concrete: concrete,
-                  concreteAgain: concreteAgain,
-                  bSpecific: bSpecific,
-                );
-                if (instance.id != id) {
-                  throw 'parsed field id does not match predefined value';
-                }
+    return uint8.startConversion((id) {
+      currentConversion = int64.startConversion((data) {
+        final instance = IntegerMessage(data);
+        if (instance.id != id) {
+          throw 'parsed field id does not match predefined value';
+        }
 
-                if (instance.subId != subId) {
-                  throw 'parsed field subId does not match predefined value';
-                }
-
-                if (instance.bId != bId) {
-                  throw 'parsed field bId does not match predefined value';
-                }
-
-                onValue(instance);
-              });
-            });
-          });
-        });
-      });
-    });
-  }
-}
-
-// ignore_for_file: missing_override_of_must_be_overridden, duplicate_ignore
-
-class DType extends BinaryType<D> {
-  const DType();
-
-  @override
-  Uint8List encode(D input) {
-    final builder = BytesBuilder(copy: false);
-    builder.add(int32.encode(input.concrete));
-    builder.add(int32.encode(input.id));
-    builder.add(int32.encode(input.concreteAgain));
-    builder.add(int32.encode(input.subId));
-    builder.add(int32.encode(input.bSpecific));
-    builder.add(int32.encode(input.bId));
-    builder.add(int32.encode(input.ddddd));
-    return builder.takeBytes();
-  }
-
-  @override
-  BinaryConversion<D> startConversion(void Function(D) onValue) => _DConversion(
-        this,
-        onValue,
-      );
-}
-
-class _DConversion extends CompositeBinaryConversion<D> {
-  _DConversion(
-    this.type,
-    super.onValue,
-  );
-
-  final DType type;
-
-  @override
-  BinaryConversion startConversion() {
-    return int32.startConversion((concrete) {
-      currentConversion = int32.startConversion((id) {
-        currentConversion = int32.startConversion((concreteAgain) {
-          currentConversion = int32.startConversion((subId) {
-            currentConversion = int32.startConversion((bSpecific) {
-              currentConversion = int32.startConversion((bId) {
-                currentConversion = int32.startConversion((ddddd) {
-                  final instance = D(
-                    concrete: concrete,
-                    concreteAgain: concreteAgain,
-                    bSpecific: bSpecific,
-                    ddddd: ddddd,
-                  );
-                  if (instance.id != id) {
-                    throw 'parsed field id does not match predefined value';
-                  }
-
-                  if (instance.subId != subId) {
-                    throw 'parsed field subId does not match predefined value';
-                  }
-
-                  if (instance.bId != bId) {
-                    throw 'parsed field bId does not match predefined value';
-                  }
-
-                  onValue(instance);
-                });
-              });
-            });
-          });
-        });
+        onValue(instance);
       });
     });
   }

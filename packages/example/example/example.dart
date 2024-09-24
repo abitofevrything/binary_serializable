@@ -4,95 +4,53 @@ part 'example.g.dart';
 
 @BinarySerializable()
 class Example {
+  @uint64
+  final int id;
+
+  @utf8String
+  final String name;
+
+  @LengthPrefixedListType(uint8, utf8String)
+  final List<String> tags;
+
+  Example(this.id, this.name, this.tags);
+}
+
+@BinarySerializable()
+class GenericType<T, U> {
+  @Generic('T')
+  final T genericField;
+
+  @LengthPrefixedListType(uint8, Generic('U'))
+  final List<U> genericList;
+
+  GenericType(this.genericField, this.genericList);
+}
+
+@BinarySerializable()
+abstract class Message {
   @uint8
-  final int type;
-
-  @BufferType(256)
-  final Uint8List data;
-
-  Example(this.type, this.data);
-}
-
-@BinarySerializable()
-abstract base class Base {
-  @int32
-  final int concrete;
-
-  @int32
   int get id;
-
-  @int32
-  final int concreteAgain;
-
-  @int32
-  int get subId;
-
-  Base({required this.concrete, required this.concreteAgain});
 }
 
 @BinarySerializable()
-final class A extends Base {
-  @override
-  int get id => 1;
-
-  @override
-  int get subId => 0;
-
-  @int32
-  final int aSpecific;
-
-  A({
-    required super.concrete,
-    required super.concreteAgain,
-    required this.aSpecific,
-  });
-}
-
-@BinarySerializable()
-abstract base class B extends Base {
+class StringMessage extends Message {
   @override
   int get id => 2;
 
-  @int32
-  final int bSpecific;
+  @utf8String
+  final String data;
 
-  @override
-  int get subId => 2;
-
-  @int32
-  int get bId;
-
-  B({
-    required super.concrete,
-    required super.concreteAgain,
-    required this.bSpecific,
-  });
+  StringMessage(this.data);
 }
 
 @BinarySerializable()
-final class C extends B {
+class IntegerMessage extends Message {
   @override
-  int get bId => 3;
+  int get id => 1;
 
-  C({
-    required super.concrete,
-    required super.concreteAgain,
-    required super.bSpecific,
-  });
-}
+  @int64
+  final int data;
 
-@BinarySerializable()
-final class D extends B {
-  @override
-  int get bId => 4;
-
-  @int32
-  final int ddddd;
-
-  D({
-    required super.concrete,
-    required super.concreteAgain,
-    required super.bSpecific,
-    required this.ddddd,
-  });
+  IntegerMessage(this.data);
 }
