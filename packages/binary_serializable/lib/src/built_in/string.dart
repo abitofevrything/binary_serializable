@@ -50,7 +50,7 @@ class _NullTerminatedStringConversion extends BinaryConversion<String> {
       return data.length;
     }
 
-    builder.add(data.buffer.asUint8List(data.offsetInBytes, nullIndex));
+    builder.add(Uint8List.sublistView(data, 0, nullIndex));
 
     onValue(type.codec.decode(builder.takeBytes()));
 

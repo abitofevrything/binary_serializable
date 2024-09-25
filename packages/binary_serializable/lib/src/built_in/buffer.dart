@@ -36,10 +36,7 @@ class BufferConversion extends BinaryConversion<Uint8List> {
   @override
   int add(Uint8List data) {
     if (_builder.length + data.length >= length) {
-      final taken = data.buffer.asUint8List(
-        data.offsetInBytes,
-        length - _builder.length,
-      );
+      final taken = Uint8List.sublistView(data, 0, length - _builder.length);
       _builder.add(taken);
       onValue(_builder.takeBytes());
       return taken.length;

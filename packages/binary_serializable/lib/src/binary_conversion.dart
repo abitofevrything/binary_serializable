@@ -48,7 +48,7 @@ abstract class BinaryConversion<T> {
   void addAll(Uint8List data) {
     var consumed = 0;
     while (consumed < data.length) {
-      consumed += add(data.buffer.asUint8List(data.offsetInBytes + consumed));
+      consumed += add(Uint8List.sublistView(data, consumed));
     }
   }
 

@@ -50,8 +50,7 @@ class _ListConversion<T> extends BinaryConversion<List<T>> {
     }
 
     do {
-      offset +=
-          conversion.add(data.buffer.asUint8List(data.offsetInBytes + offset));
+      offset += conversion.add(Uint8List.sublistView(data, offset));
     } while (index != 0 && offset < data.length);
 
     return offset;

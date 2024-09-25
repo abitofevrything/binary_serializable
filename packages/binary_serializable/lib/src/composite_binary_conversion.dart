@@ -65,9 +65,7 @@ abstract class CompositeBinaryConversion<T> extends BinaryConversion<T> {
 
     do {
       previousConversion = _currentConversion;
-      offset += _currentConversion.add(
-        data.buffer.asUint8List(data.offsetInBytes + offset),
-      );
+      offset += _currentConversion.add(Uint8List.sublistView(data, offset));
 
       // _isFlushed is set when we produce a value.
       if (_isFlushed) return offset;

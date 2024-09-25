@@ -154,9 +154,7 @@ class _IntegerConversion extends BinaryConversion<int> {
     }
 
     // Add any remaining data.
-    add(data.buffer.asUint8List(
-      data.offsetInBytes + consumed + wholeElementCount * type.width,
-    ));
+    add(Uint8List.sublistView(data, consumed + wholeElementCount * type.width));
   }
 
   @override

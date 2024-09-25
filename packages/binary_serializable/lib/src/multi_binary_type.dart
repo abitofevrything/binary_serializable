@@ -94,7 +94,7 @@ class _MultiBinaryConversion<T, U> extends BinaryConversion<T> {
 
     if (identical(_currentConversion, _preludeConversion)) {
       consumed += _preludeConversion.add(data);
-      _preludeBytes.add(data.buffer.asUint8List(data.offsetInBytes, consumed));
+      _preludeBytes.add(Uint8List.sublistView(data, 0, consumed));
 
       if (identical(_currentConversion, _preludeConversion)) {
         assert(
@@ -124,7 +124,7 @@ class _MultiBinaryConversion<T, U> extends BinaryConversion<T> {
 
         // Update the chunk so we don't add data we've already copied into the
         // subtype conversion again.
-        data = data.buffer.asUint8List(data.offsetInBytes + consumed);
+        data = Uint8List.sublistView(data, consumed);
       }
     }
 
