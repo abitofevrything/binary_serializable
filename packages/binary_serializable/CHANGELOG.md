@@ -1,3 +1,7 @@
+## 0.3.3
+
+- Fix issue with buffers losing their lengths in some conversions.
+
 ## 0.3.2
 
 - Introduce new `BinaryType.encodeInto` method for efficient encoding. Existing `BinaryType` implementations must now implement this method instead of `encode`.
