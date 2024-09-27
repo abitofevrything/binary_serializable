@@ -694,11 +694,18 @@ class BinarySerializableEmitter {
               ..optionalParameters.replace([
                 Parameter(
                   (builder) => builder
+                    ..named = true
                     ..toSuper = true
                     ..name = 'subtypes'
                     ..defaultTo = typeArguments.isEmpty
                         ? refer(typeName).property('defaultSubtypes').code
                         : literalConstMap({}).code,
+                ),
+                Parameter(
+                  (builder) => builder
+                    ..named = true
+                    ..toSuper = true
+                    ..name = 'getSubtype',
                 ),
               ]),
           )

@@ -5,7 +5,7 @@ import 'harness.dart';
 
 // ignore: missing_override_of_must_be_overridden
 class _TestType extends MultiBinaryType<Uint8List, int> {
-  _TestType(super.subtypes);
+  _TestType({super.subtypes});
 
   @override
   int extractPrelude(Uint8List instance) => instance.length;
@@ -57,7 +57,7 @@ final lengths = [
 void main() {
   testBinaryType(
     'MultiBinaryType',
-    _TestType({
+    _TestType(subtypes: {
       for (final length in lengths)
         length: _TestLengthPrefixedBufferType(length),
     }),

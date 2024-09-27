@@ -1,6 +1,9 @@
 import 'package:binary_serializable/binary_serializable.dart';
 import 'package:meta/meta.dart';
 
+Never _getSubtype(prelude) =>
+    throw FormatException('No subtype matching $prelude found');
+
 /// {@template multi_binary_type}
 /// A [BinaryType] that selects one of multiple other [BinaryType]s to serialize
 /// an object based on fields common to all possible types.
@@ -26,8 +29,13 @@ abstract class MultiBinaryType<T, U> extends BinaryType<T> {
   /// further encode or decode it.
   final Map<U, BinaryType<T>> subtypes;
 
+  final BinaryType<T> Function(U) getSubtype;
+
   /// {@macro multi_binary_type}
-  const MultiBinaryType(this.subtypes);
+  const MultiBinaryType({
+    this.subtypes = const {},
+    this.getSubtype = _getSubtype,
+  });
 
   /// Extract the prelude from a Dart object.
   ///
@@ -50,11 +58,7 @@ abstract class MultiBinaryType<T, U> extends BinaryType<T> {
   @override
   void encodeInto(T input, BytesBuilder builder) {
     final prelude = extractPrelude(input);
-    final subtype = subtypes[prelude];
-
-    if (subtype == null) {
-      throw FormatException('No subtype matching $prelude found');
-    }
+    final subtype = subtypes[prelude] ?? getSubtype(prelude);
 
     subtype.encodeInto(input, builder);
   }

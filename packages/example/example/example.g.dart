@@ -131,7 +131,10 @@ class _GenericTypeConversion<T, U>
 }
 
 class MessageType extends MultiBinaryType<Message, int> {
-  const MessageType([super.subtypes = MessageType.defaultSubtypes]);
+  const MessageType({
+    super.subtypes = MessageType.defaultSubtypes,
+    super.getSubtype,
+  });
 
   static const Map<int, BinaryType<Message>> defaultSubtypes = {
     2: StringMessageType(),
