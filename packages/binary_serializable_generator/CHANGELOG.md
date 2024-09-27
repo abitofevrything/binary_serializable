@@ -1,3 +1,7 @@
+## 0.3.4
+
+- Add a fallback `getSubtype` function to `MultiBinaryType`.
+
 ## 0.3.2
 
 - Add support for `BinaryType.encodeInto`.

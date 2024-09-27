@@ -1,6 +1,6 @@
 name: binary_serializable_generator
 description: Code generation for binary_serializable's BinaryTypes.
-version: 0.3.2
+version: 0.3.4
 
 repository: https://github.com/abitofevrything/binary_serializable/tree/main/packages/binary_serializable_generator
 

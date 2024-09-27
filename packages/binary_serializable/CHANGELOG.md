@@ -1,3 +1,7 @@
+## 0.3.4
+
+- Add a fallback `getSubtype` function to `MultiBinaryType`.
+
 ## 0.3.3
 
 - Fix issue with buffers losing their lengths in some conversions.

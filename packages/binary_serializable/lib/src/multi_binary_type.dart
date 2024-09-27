@@ -29,6 +29,12 @@ abstract class MultiBinaryType<T, U> extends BinaryType<T> {
   /// further encode or decode it.
   final Map<U, BinaryType<T>> subtypes;
 
+  /// A function that provides the specific type for a given prelude.
+  ///
+  /// {@macro prelude}.
+  ///
+  /// This function is only used if the prelude is not found in the [subtypes]
+  /// map.
   final BinaryType<T> Function(U) getSubtype;
 
   /// {@macro multi_binary_type}
