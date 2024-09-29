@@ -79,10 +79,7 @@ class _MultiBinaryConversion<T, U> extends BinaryConversion<T> {
 
   late final BinaryConversion<U> _preludeConversion =
       type.startPreludeConversion((prelude) {
-    final subtype = type.subtypes[prelude];
-    if (subtype == null) {
-      throw FormatException('No subtype matching $prelude found');
-    }
+    final subtype = type.subtypes[prelude] ?? type.getSubtype(prelude);
     _currentConversion = subtype.startConversion(onValue);
   });
 

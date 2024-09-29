@@ -1,3 +1,7 @@
+## 0.3.5
+
+- Use `getSubtype` when decoding values.
+
 ## 0.3.4
 
 - Add a fallback `getSubtype` function to `MultiBinaryType`.
